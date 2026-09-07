@@ -1,80 +1,107 @@
 # UChat 💬
 
-**A real-time-feeling chat app, built from scratch — no frameworks doing the heavy lifting.**
+**A WhatsApp-inspired real-time chat application built from scratch with Python and Flask.**
 
-UChat is a WhatsApp-inspired messenger where every piece — auth, message storage,
-the "live" delivery, the UI — is hand-built with **Python, Flask, Jinja2, and SQLite**.
-No chat SDK, no websocket library, no template kit. Just a clean demonstration of how
-messaging apps actually work under the hood: hashed auth, a relational message model,
-a lightweight polling layer for near-real-time updates, and a pixel-conscious WhatsApp-style
-UI built in plain CSS.
+UChat is a full-stack messaging application designed to demonstrate how a modern chat system works behind the scenes.
+
+Users can create accounts, update their profiles, start one-to-one conversations, send messages, and see unread messages and recent conversations through a responsive WhatsApp-inspired interface.
+
+The application uses lightweight polling to create a near-real-time messaging experience without relying on external chat services or WebSocket infrastructure.
 
 ![UChat screenshot](screenshot.png)
 
-## Features
-- Email/username + password auth (Flask-Login, hashed passwords)
-- WhatsApp-style UI: sidebar with contacts, unread badges, chat bubbles, timestamps
-- Real one-to-one messaging, persisted in SQLite
-- Live-feeling updates via lightweight polling (no external services / websocket server needed)
-- Editable profile (display name + status)
-- Fully responsive layout
+## ✨ What You Can Try
 
-## Tech stack
-- **Backend:** Flask, Flask-SQLAlchemy, Flask-Login
-- **Frontend:** Jinja2 templates, vanilla CSS + JS (no framework needed)
-- **Database:** SQLite (swap the URI in `app.py` for Postgres/MySQL in production)
+* **Create an account** and securely log in
+* **Start conversations** with other registered users
+* **Send and receive messages** between accounts
+* **See unread message indicators** and conversation previews
+* **View timestamps** on messages
+* **Edit your profile**, including display name and status
+* **Use the application on desktop or mobile-sized screens**
 
-## Getting started
+To experience the chat functionality, open the application in two browser windows or an incognito window and log in with different accounts.
 
-```bash
-# 1. Create and activate a virtual environment
-python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
+## 🛠️ Built With
 
-# 2. Install dependencies
-pip install -r requirements.txt
+* **Python**
+* **Flask**
+* **Flask-SQLAlchemy**
+* **Flask-Login**
+* **Jinja2**
+* **SQLite**
+* **Vanilla CSS**
+* **JavaScript**
 
-# 3. Initialize the database
-flask --app app init-db
+No chat SDK or UI framework is used. The messaging system, database structure, authentication, and interface are implemented specifically for this project.
 
-# 4. Run the app
-python app.py
-```
+## ⚙️ How It Works
 
-Visit **http://localhost:5000**, register two or more accounts (e.g. in separate browser
-windows / incognito tabs), and start chatting between them.
+### Authentication
 
-## Project structure
-```
+User sessions are managed with Flask-Login, while passwords are securely hashed using Werkzeug.
+
+### Messaging
+
+Every message is stored in the database with information such as:
+
+* Sender
+* Recipient
+* Message content
+* Timestamp
+* Read status
+
+### Near Real-Time Updates
+
+Instead of requiring a WebSocket server, UChat periodically checks for new messages using lightweight HTTP polling.
+
+This provides a real-time-feeling experience while keeping the architecture simple and easy to deploy.
+
+### Read Status
+
+Messages can be marked as read when the recipient opens or polls the conversation.
+
+## 🎯 What This Project Demonstrates
+
+UChat demonstrates practical backend and full-stack development concepts including:
+
+* User authentication
+* Password security
+* Relational database design
+* CRUD operations
+* Session management
+* REST-style API endpoints
+* Asynchronous-feeling UI updates
+* Responsive frontend development
+* Server-side templating
+* Database-backed messaging
+
+## 🚀 Possible Improvements
+
+The application could be extended with:
+
+* WebSocket-based real-time messaging
+* Image and file sharing
+* Group conversations
+* Typing indicators
+* Online/offline status
+* Message reactions
+* Message editing and deletion
+* Push notifications
+
+## 📁 Project Structure
+
+```text
 uchat/
-├── app.py                  # Routes, models, app factory
+├── app.py
 ├── requirements.txt
-├── uchat.db                 # created on first run
 ├── templates/
 │   ├── base.html
 │   ├── login.html
 │   ├── register.html
-│   ├── index.html           # sidebar + chat window
+│   ├── index.html
 │   └── profile.html
 └── static/
     ├── css/style.css
     └── js/app.js
 ```
-
-## How it works
-- **Auth:** `flask_login` manages sessions; passwords are hashed with `werkzeug.security`.
-- **Messaging:** Each message is a row in the `Message` table (`sender_id`, `recipient_id`, `body`, `timestamp`, `is_read`).
-- **"Real-time" feel:** The chat window polls `/api/messages/<user_id>?since=<last_id>` every 2.5s for new messages, and the sidebar polls `/api/sidebar` every 4s for unread counts and last-message previews — no websocket infrastructure required, easy to deploy anywhere.
-- **Read receipts (basic):** messages are marked read when the recipient opens/polls the conversation.
-
-## Ideas to extend this for your portfolio
-- Swap polling for WebSockets (Flask-SocketIO) for true real-time delivery
-- Add image/file attachments
-- Add group chats
-- Add online/typing indicators
-- Deploy to Render/Railway/Fly.io with Postgres
-
-## Deployment notes
-Set a real `UCHAT_SECRET_KEY` environment variable in production, and point
-`SQLALCHEMY_DATABASE_URI` at a persistent database rather than SQLite if
-deploying somewhere with an ephemeral filesystem.
