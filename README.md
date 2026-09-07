@@ -10,7 +10,6 @@ a lightweight polling layer for near-real-time updates, and a pixel-conscious Wh
 UI built in plain CSS.
 
 ![UChat screenshot](screenshot.png)
-*(swap in your own screenshot after running the app)*
 
 ## Features
 - Email/username + password auth (Flask-Login, hashed passwords)
