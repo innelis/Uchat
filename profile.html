@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Profile · UChat{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="avatar avatar-lg" style="background:{{ current_user.avatar_color }}">{{ current_user.initials() }}</div>
+            <h1>{{ current_user.display_name }}</h1>
+            <p>@{{ current_user.username }}</p>
+        </div>
+        <form method="POST" class="auth-form">
+            <label>Display name
+                <input type="text" name="display_name" value="{{ current_user.display_name }}">
+            </label>
+            <label>Status
+                <input type="text" name="status" value="{{ current_user.status }}">
+            </label>
+            <button type="submit" class="btn-primary">Save changes</button>
+        </form>
+        <p class="auth-switch"><a href="{{ url_for('index') }}">← Back to chats</a></p>
+    </div>
+</div>
+{% endblock %}

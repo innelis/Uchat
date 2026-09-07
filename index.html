@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}{% if active_chat %}{{ active_chat.display_name }} · {% endif %}UChat{% endblock %}
+{% block content %}
+<div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="avatar" style="background:{{ current_user.avatar_color }}">{{ current_user.initials() }}</div>
+            <div class="sidebar-header-actions">
+                <a href="{{ url_for('profile') }}" title="Profile" class="icon-btn">⚙️</a>
+                <a href="{{ url_for('logout') }}" title="Log out" class="icon-btn">⏻</a>
+            </div>
+        </div>
+
+        <div class="sidebar-search">
+            <input type="text" id="contact-search" placeholder="Search or start new chat">
+        </div>
+
+        <ul class="contact-list" id="contact-list">
+            {% for p in partners %}
+            <li class="contact-item {% if active_chat and active_chat.id == p.user.id %}active{% endif %}"
+                data-user-id="{{ p.user.id }}"
+                data-name="{{ p.user.display_name|lower }}">
+                <a href="{{ url_for('chat', user_id=p.user.id) }}">
+                    <div class="avatar" style="background:{{ p.user.avatar_color }}">{{ p.user.initials() }}</div>
+                    <div class="contact-info">
+                        <div class="contact-top">
+                            <span class="contact-name">{{ p.user.display_name }}</span>
+                            <span class="contact-time" data-time>{{ p.last_message.timestamp.strftime('%H:%M') if p.last_message else '' }}</span>
+                        </div>
+                        <div class="contact-bottom">
+                            <span class="contact-preview" data-preview>{{ p.last_message.body if p.last_message else 'Say hello 👋' }}</span>
+                            {% if p.unread_count %}
+                            <span class="unread-badge" data-badge>{{ p.unread_count }}</span>
+                            {% else %}
+                            <span class="unread-badge" data-badge style="display:none"></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {% else %}
+            <li class="empty-state">No other users yet. Invite a friend to register!</li>
+            {% endfor %}
+        </ul>
+    </aside>
+
+    <!-- Chat panel -->
+    <main class="chat-panel">
+        {% if active_chat %}
+        <div class="chat-header">
+            <div class="avatar" style="background:{{ active_chat.avatar_color }}">{{ active_chat.initials() }}</div>
+            <div class="chat-header-info">
+                <span class="chat-header-name">{{ active_chat.display_name }}</span>
+                <span class="chat-header-status">{{ active_chat.status }}</span>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages" data-user-id="{{ active_chat.id }}" data-last-id="{{ messages[-1].id if messages else 0 }}">
+            {% for m in messages %}
+            <div class="message-row {% if m.sender_id == current_user.id %}mine{% else %}theirs{% endif %}">
+                <div class="bubble">
+                    <span class="bubble-text">{{ m.body }}</span>
+                    <span class="bubble-time">{{ m.timestamp.strftime('%H:%M') }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-chat">
+                <p>No messages yet. Say hi to {{ active_chat.display_name }} 👋</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form class="message-form" id="message-form">
+            <input type="text" name="body" id="message-input" placeholder="Type a message" autocomplete="off" autofocus>
+            <button type="submit" class="send-btn" title="Send">➤</button>
+        </form>
+        {% else %}
+        <div class="chat-placeholder">
+            <div class="chat-placeholder-icon">💬</div>
+            <h2>UChat</h2>
+            <p>Select a conversation from the left to start messaging.</p>
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.UCHAT_CURRENT_USER_ID = {{ current_user.id }};
+</script>
+{% endblock %}
